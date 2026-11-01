@@ -23,15 +23,16 @@ echo  Using %IP%
 
 set T=%IP%:5555
 if not "%IP::=%"=="%IP%" set T=[%IP%]:5555
+adb.exe disconnect %T% >nul 2>&1
 adb.exe connect %T%
+timeout /t 3 /nobreak >nul
+adb.exe devices > "%TEMP%\adb-devices.txt" 2>&1
+echo.
+type "%TEMP%\adb-devices.txt"
+findstr /c:"%T%" "%TEMP%\adb-devices.txt" | findstr "unauthorized" >nul
+if not errorlevel 1 goto unauthorized
 adb.exe -s %T% get-state >nul 2>&1
-if errorlevel 1 (
-  echo.
-  echo  Could not connect. Unplug the projector, plug it back in, wait 1 minute
-  echo  for it to rejoin the hotspot, then run this again.
-  pause
-  exit /b 1
-)
+if errorlevel 1 goto notready
 set D=adb.exe -s %T%
 set OUT=%USERPROFILE%\projector-rescue.txt
 
@@ -82,3 +83,21 @@ for /f "usebackq delims=" %%A in (`powershell -NoProfile -ExecutionPolicy Bypass
 )
 if "%IP%"=="" if %COUNT%==1 set IP=%FIRST%
 exit /b
+
+:unauthorized
+echo.
+echo  The projector is asking "Allow debugging?" on the dark screen.
+echo  Point the remote at it and press, slowly, one second apart:
+echo.
+echo      OK,  Down,  Right,  OK
+echo.
+echo  (That ticks "Always allow" and presses Allow.) Then run rescue.bat again.
+pause
+exit /b 1
+
+:notready
+echo.
+echo  The projector is on the hotspot but not answering yet (see the line above).
+echo  Wait one minute and run rescue.bat again. If it still fails, send Claude a photo.
+pause
+exit /b 1
