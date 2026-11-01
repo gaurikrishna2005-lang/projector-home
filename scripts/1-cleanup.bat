@@ -15,7 +15,7 @@ echo.
 set /p IP= Type the projector's IP address and press Enter:
 set IP=%IP: =%
 set T=%IP%:5555
-echo %IP% | find ":" >nul && set T=[%IP%]:5555
+if not "%IP::=%"=="%IP%" set T=[%IP%]:5555
 
 %ADB% disconnect >nul 2>&1
 %ADB% connect %T%
