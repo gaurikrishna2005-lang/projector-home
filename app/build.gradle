@@ -1,0 +1,48 @@
+plugins {
+    id 'com.android.application'
+}
+
+def runNumber = (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInteger()
+
+android {
+    namespace 'home.projector'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'home.projector'
+        minSdk 21
+        targetSdk 30          // the projector runs Android 11
+        versionCode runNumber
+        versionName "1.0.$runNumber"
+    }
+
+    // A fixed key so every new build installs over the previous one.
+    // This is a personal app, so the key lives in the repo on purpose.
+    signingConfigs {
+        release {
+            storeFile file('release.keystore')
+            storePassword 'projectorhome'
+            keyAlias 'home'
+            keyPassword 'projectorhome'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+            signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+}

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg">#FF0E0E10</color>
+
+    <style name="HomeTheme" parent="@android:style/Theme.DeviceDefault.NoActionBar.Fullscreen">
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:colorBackgroundCacheHint">@color/bg</item>
+        <item name="android:windowShowWallpaper">false</item>
+        <!-- No open/close animations: screens appear instantly -->
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+</resources>
