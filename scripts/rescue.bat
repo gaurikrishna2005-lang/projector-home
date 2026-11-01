@@ -3,19 +3,28 @@ setlocal
 cd /d "%~dp0"
 title Projector rescue
 
-set ADB=adb
-if exist "%~dp0adb.exe" set ADB="%~dp0adb.exe"
+echo.
+echo  Projector rescue: puts back the old home screen and earlier changes,
+echo  and saves what went wrong.
+echo  (Phone hotspot on, PC connected to it by Wi-Fi, projector switched on.)
+echo.
+set IP=
+set /p IP= Type the projector's IP address, or just press Enter to search for it:
+if not "%IP%"=="" set IP=%IP: =%
+if "%IP%"=="" call :find
+if "%IP%"=="" (
+  echo.
+  echo  Couldn't find the projector. Check the PC is on the hotspot by Wi-Fi,
+  echo  unplug the projector, plug it back in, wait 1 minute and run this again.
+  pause
+  exit /b 1
+)
+echo  Using %IP%
 
-echo.
-echo  Projector rescue: puts back the old home screen and earlier changes, and saves what went wrong.
-echo  (PC and projector on the same hotspot as before.)
-echo.
-set /p IP= Type the projector's IP address and press Enter:
-set IP=%IP: =%
 set T=%IP%:5555
 if not "%IP::=%"=="%IP%" set T=[%IP%]:5555
-%ADB% connect %T%
-%ADB% -s %T% get-state >nul 2>&1
+adb.exe connect %T%
+adb.exe -s %T% get-state >nul 2>&1
 if errorlevel 1 (
   echo.
   echo  Could not connect. Unplug the projector, plug it back in, wait 1 minute
@@ -23,7 +32,7 @@ if errorlevel 1 (
   pause
   exit /b 1
 )
-set D=%ADB% -s %T%
+set D=adb.exe -s %T%
 set OUT=%USERPROFILE%\projector-rescue.txt
 
 echo  Saving details...
@@ -57,3 +66,19 @@ echo  Done. Is there a picture on the wall now?
 echo  A folder window will open: send projector-rescue.txt and projector-screen.png to Claude.
 explorer /select,"%OUT%"
 pause
+exit /b
+
+rem Finds the projector by scanning for the ADB port and checking its serial number.
+:find
+echo  Searching for the projector, this takes a few seconds...
+set COUNT=0
+set FIRST=
+for /f "usebackq delims=" %%A in (`powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0find-projector.ps1"`) do (
+  set /a COUNT+=1
+  if not defined FIRST set FIRST=%%A
+  adb.exe connect %%A:5555 >nul 2>&1
+  adb.exe -s %%A:5555 shell getprop ro.serialno 2>nul | findstr /i "9c00108a2694c7322d5" >nul
+  if not errorlevel 1 set IP=%%A
+)
+if "%IP%"=="" if %COUNT%==1 set IP=%FIRST%
+exit /b
