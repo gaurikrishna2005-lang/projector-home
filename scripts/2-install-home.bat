@@ -16,8 +16,11 @@ echo.
 echo  Projector Home - step 2
 echo  -----------------------
 set /p IP= Type the projector's IP address and press Enter:
-%ADB% connect %IP%
-set D=%ADB% -s %IP%:5555
+set IP=%IP: =%
+set T=%IP%:5555
+echo %IP% | find ":" >nul && set T=[%IP%]:5555
+%ADB% connect %T%
+set D=%ADB% -s %T%
 
 echo.
 echo  [1/3] Installing the new home screen...

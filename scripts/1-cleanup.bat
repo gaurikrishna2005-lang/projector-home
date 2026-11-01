@@ -10,25 +10,28 @@ if exist "%~dp0adb.exe" set ADB="%~dp0adb.exe"
 echo.
 echo  Projector cleanup - step 1
 echo  --------------------------
-echo  Make sure "ADB Debugging" is ON in the projector's Developer options.
+echo  Make sure "USB Debugging" shows Open in the projector's Developer options.
 echo.
 set /p IP= Type the projector's IP address and press Enter:
+set IP=%IP: =%
+set T=%IP%:5555
+echo %IP% | find ":" >nul && set T=[%IP%]:5555
 
 %ADB% disconnect >nul 2>&1
-%ADB% connect %IP%
+%ADB% connect %T%
 echo.
 echo  If the projector shows "Allow debugging?", tick "Always allow" and press OK.
 echo  Then come back here.
 pause
 
-%ADB% -s %IP%:5555 get-state >nul 2>&1
+%ADB% -s %T% get-state >nul 2>&1
 if errorlevel 1 (
   echo.
-  echo  Could not connect. Check the IP address and that ADB Debugging is on, then run this again.
+  echo  Could not connect. Check the IP address and that USB Debugging shows Open, then run this again.
   pause
   exit /b 1
 )
-set D=%ADB% -s %IP%:5555
+set D=%ADB% -s %T%
 
 echo.
 echo  [1/3] Switching off the suspected proxy apps...

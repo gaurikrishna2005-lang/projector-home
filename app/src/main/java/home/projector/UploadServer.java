@@ -165,16 +165,36 @@ final class UploadServer {
         out.flush();
     }
 
-    /** The projector's address on the home network, e.g. 192.168.1.23. */
+    /**
+     * The projector's address on the home network, ready to put in a URL:
+     * 192.168.1.23 when there is one, otherwise a bracketed IPv6 address
+     * (a local fd.. address first, as it stays the same).
+     */
     static String localIp() {
+        String local6 = null, global6 = null;
         try {
             for (NetworkInterface ni : Collections.list(NetworkInterface.getNetworkInterfaces())) {
                 if (!ni.isUp() || ni.isLoopback()) continue;
                 for (InetAddress a : Collections.list(ni.getInetAddresses())) {
-                    if (a instanceof Inet4Address && a.isSiteLocalAddress()) return a.getHostAddress();
+                    if (a instanceof Inet4Address) {
+                        if (a.isSiteLocalAddress()) return a.getHostAddress();
+                        continue;
+                    }
+                    if (a.isLinkLocalAddress() || a.isLoopbackAddress()) continue;
+                    String s = a.getHostAddress();
+                    int pct = s.indexOf('%');
+                    if (pct >= 0) s = s.substring(0, pct);
+                    byte first = a.getAddress()[0];
+                    if ((first & 0xFE) == 0xFC) {
+                        if (local6 == null) local6 = s;   // fc00::/7, e.g. fd06:...
+                    } else if (global6 == null) {
+                        global6 = s;
+                    }
                 }
             }
         } catch (Exception ignored) { }
+        if (local6 != null) return "[" + local6 + "]";
+        if (global6 != null) return "[" + global6 + "]";
         return null;
     }
 }

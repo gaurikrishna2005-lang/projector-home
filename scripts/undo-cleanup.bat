@@ -11,8 +11,11 @@ echo  This puts the projector back the way it came:
 echo  stock home screen, original apps and animations.
 echo.
 set /p IP= Type the projector's IP address and press Enter:
-%ADB% connect %IP%
-set D=%ADB% -s %IP%:5555
+set IP=%IP: =%
+set T=%IP%:5555
+echo %IP% | find ":" >nul && set T=[%IP%]:5555
+%ADB% connect %T%
+set D=%ADB% -s %T%
 
 for %%P in (com.hotack.silentsdk com.hotack.writesn com.htc.luminaos com.htc.htclauncherhighenglishd08) do (
   %D% shell pm enable %%P
