@@ -23,16 +23,18 @@ echo  Using %IP%
 
 set T=%IP%:5555
 if not "%IP::=%"=="%IP%" set T=[%IP%]:5555
+set TRY=0
+:check
 adb.exe disconnect %T% >nul 2>&1
-adb.exe connect %T%
-timeout /t 3 /nobreak >nul
+adb.exe connect %T% >nul 2>&1
+timeout /t 4 /nobreak >nul
 adb.exe devices > "%TEMP%\adb-devices.txt" 2>&1
-echo.
-type "%TEMP%\adb-devices.txt"
 findstr /c:"%T%" "%TEMP%\adb-devices.txt" | findstr "unauthorized" >nul
 if not errorlevel 1 goto unauthorized
 adb.exe -s %T% get-state >nul 2>&1
 if errorlevel 1 goto notready
+echo.
+echo  Connected.
 set D=adb.exe -s %T%
 set OUT=%USERPROFILE%\projector-rescue.txt
 
@@ -85,13 +87,28 @@ if "%IP%"=="" if %COUNT%==1 set IP=%FIRST%
 exit /b
 
 :unauthorized
+set /a TRY+=1
+if %TRY%==1 set KEYS=OK,   Down,   Right,   OK
+if %TRY%==2 set KEYS=Right,   OK
+if %TRY%==3 set KEYS=OK
+if %TRY%==4 set KEYS=Down,   Right,   OK
+if %TRY%==5 set KEYS=Down,   Down,   OK
+if %TRY% GTR 5 goto giveup
 echo.
-echo  The projector is asking "Allow debugging?" on the dark screen.
-echo  Point the remote at it and press, slowly, one second apart:
+echo  ----------------------------------------------------------
+echo  Attempt %TRY% of 5: the projector is asking "Allow debugging?"
+echo  on the dark screen. Point the remote at it and press slowly,
+echo  one second apart:
 echo.
-echo      OK,  Down,  Right,  OK
+echo        %KEYS%
 echo.
-echo  (That ticks "Always allow" and presses Allow.) Then run rescue.bat again.
+echo  Then come back and press any key HERE to check.
+pause >nul
+goto check
+
+:giveup
+echo.
+echo  None of the key combinations worked. Send Claude a photo of this window.
 pause
 exit /b 1
 
