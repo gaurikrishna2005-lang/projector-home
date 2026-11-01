@@ -3,6 +3,8 @@
 
     <!-- Needed to find Netflix, YouTube, Prime and the HDMI app on Android 11 -->
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    <!-- Only for the phone upload page, which runs while the Wallpaper screen is open -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature android:name="android.software.leanback" android:required="false" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
@@ -33,6 +35,13 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".WallpaperActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|screenLayout|smallestScreenSize|uiMode|density" />
 
         <activity
             android:name=".AppsActivity"

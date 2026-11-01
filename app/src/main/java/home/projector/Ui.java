@@ -13,8 +13,9 @@ import android.widget.Toast;
 /** Shared colours and small helpers. */
 final class Ui {
     static final int BG = 0xFF0E0E10;
-    static final int CARD = 0xFF19191C;
-    static final int CARD_FOCUS = 0xFF2B2B31;
+    // Slightly see-through so a wallpaper shows behind the tiles.
+    static final int CARD = 0xD919191C;
+    static final int CARD_FOCUS = 0xF22B2B31;
     static final int TEXT = 0xFFFFFFFF;
     static final int TEXT_DIM = 0xFF9A9AA0;
 

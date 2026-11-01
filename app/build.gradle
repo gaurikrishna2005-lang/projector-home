@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId 'home.projector'
-        minSdk 21
+        minSdk 24
         targetSdk 30          // the projector runs Android 11
         versionCode runNumber
         versionName "1.0.$runNumber"

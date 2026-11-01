@@ -4,8 +4,11 @@ A tiny, dark home screen for the HY300 Pro projector (Android 11, 1 GB RAM).
 
 - Clock and date
 - Four big tiles: **Netflix, YouTube, Prime Video, HDMI**
-- Small buttons: **Picture** (keystone), **All apps**, **Settings**
-- No animations, no background services, no network access
+- Small buttons: **Picture** (keystone), **Wallpaper**, **All apps**, **Settings**
+- Your own photo as the background: open **Wallpaper**, then visit the address it shows
+  from your phone's browser (same Wi-Fi) and pick photos. The upload page only runs while
+  the Wallpaper screen is open.
+- No animations, no background services
 
 ## Download
 
