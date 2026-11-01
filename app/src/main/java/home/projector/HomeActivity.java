@@ -41,6 +41,7 @@ public class HomeActivity extends Activity {
             .withAction(new Intent(Settings.ACTION_DISPLAY_SETTINGS));
     private final Tile settings = new Tile("Settings", null)
             .withAction(new Intent(Settings.ACTION_SETTINGS));
+    private final Tile playStore = new Tile("Play Store", "play store", "com.android.vending");
 
     private TextView[] tileViews;
     private ImageView background;
@@ -83,6 +84,12 @@ public class HomeActivity extends Activity {
         for (int i = 0; i < tiles.length; i++) {
             final Tile t = tiles[i];
             TextView v = button(t.label, 24, 16, 12);
+            int pad = Ui.dp(this, 8);
+            v.setPadding(pad, pad, pad, pad);
+            if (android.os.Build.VERSION.SDK_INT >= 26) {
+                // Long names like "Prime Video" shrink to fit instead of being cut off.
+                v.setAutoSizeTextTypeUniformWithConfiguration(14, 24, 1, TypedValue.COMPLEX_UNIT_SP);
+            }
             v.setOnClickListener(view -> open(t));
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
             int m = Ui.dp(this, 10);
@@ -98,6 +105,7 @@ public class HomeActivity extends Activity {
         small.addView(smallButton(picture.label, view -> open(picture)));
         small.addView(smallButton("Wallpaper", view ->
                 Ui.launch(this, new Intent(this, WallpaperActivity.class), "Wallpaper")));
+        small.addView(smallButton(playStore.label, view -> open(playStore)));
         small.addView(smallButton("All apps", view -> openApps()));
         small.addView(smallButton(settings.label, view -> open(settings)));
         root.addView(small, new FrameLayout.LayoutParams(
