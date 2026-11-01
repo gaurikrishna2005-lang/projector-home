@@ -13,7 +13,7 @@ Every change to this repo builds the app automatically (see the **Actions** tab)
 The latest build is always at:
 
 ```
-https://github.com/<your-username>/projector-home/releases/latest/download/projector-home.apk
+https://github.com/gaurikrishna2005-lang/projector-home/releases/latest/download/projector-home.apk
 ```
 
 ## Remote
@@ -36,6 +36,7 @@ name, and falls back to searching app names for the second word given.
 In `scripts/`. Copy them into the `platform-tools` folder and double-click.
 
 - `1-cleanup.bat` switches off the suspected proxy apps, turns off animations and saves `projector-info.txt`
+- `2-install-home.bat` installs the app (put `projector-home.apk` next to it) and makes it the home screen
 - `undo-cleanup.bat` puts everything back as it came
 
 ## Signing key

@@ -3,6 +3,9 @@ name: Build
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'scripts/**'
+      - 'README.md'
   workflow_dispatch:
 
 permissions:
