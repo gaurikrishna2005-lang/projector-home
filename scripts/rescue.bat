@@ -7,7 +7,7 @@ set ADB=adb
 if exist "%~dp0adb.exe" set ADB="%~dp0adb.exe"
 
 echo.
-echo  Projector rescue: turns the old home screen back on and saves what went wrong.
+echo  Projector rescue: puts back the old home screen and earlier changes, and saves what went wrong.
 echo  (PC and projector on the same hotspot as before.)
 echo.
 set /p IP= Type the projector's IP address and press Enter:
@@ -39,13 +39,21 @@ echo  Saving details...
 >> "%OUT%" echo === RECENT LOG ===
 %D% shell "logcat -d -t 400 | grep -iE 'htc|home.projector|keystone|display|AndroidRuntime|FATAL|ActivityTaskManager'" >> "%OUT%" 2>&1
 
-echo  Turning the old home screen back on...
+echo  Taking a screenshot of what the projector is trying to show...
+%D% exec-out screencap -p > "%USERPROFILE%\projector-screen.png"
+
+echo  Putting the earlier changes back...
 %D% shell pm enable com.htc.htclauncherhighenglishd08
+%D% shell pm enable com.hotack.writesn
+%D% shell settings put global window_animation_scale 1
+%D% shell settings put global transition_animation_scale 1
+%D% shell settings put global animator_duration_scale 1
+%D% shell cmd package set-home-activity com.htc.htclauncherhighenglishd08/com.htc.activity.HomeActivity
 %D% shell input keyevent KEYCODE_WAKEUP
 %D% shell input keyevent KEYCODE_HOME
 
 echo.
 echo  Done. Is there a picture on the wall now?
-echo  A folder window will open with projector-rescue.txt selected: send it to Claude.
+echo  A folder window will open: send projector-rescue.txt and projector-screen.png to Claude.
 explorer /select,"%OUT%"
 pause
