@@ -36,10 +36,14 @@ public class HomeActivity extends Activity {
                     .withComponent("com.softwinner.awlivetv", "com.softwinner.awlivetv.MainActivity"),
     };
 
-    /** Small buttons, bottom right. "Picture" is keystone; it falls back to display settings. */
-    private final Tile picture = new Tile("Picture", "keystone")
+    /** The projector's own (blue) settings app, where keystone lives on the HY300 Pro. */
+    private static final String PROJECTOR_SETTINGS = "com.htc.htcsettings";
+
+    /** Small buttons, bottom right. "Picture" jumps to the keystone screen when it can find it. */
+    private final Tile picture = new Tile("Picture", null, PROJECTOR_SETTINGS)
+            .withSearch(PROJECTOR_SETTINGS, "keystone|trapez|correct|projection")
             .withAction(new Intent(Settings.ACTION_DISPLAY_SETTINGS));
-    private final Tile settings = new Tile("Settings", null)
+    private final Tile settings = new Tile("Settings", null, PROJECTOR_SETTINGS)
             .withAction(new Intent(Settings.ACTION_SETTINGS));
     private final Tile playStore = new Tile("Play Store", "play store", "com.android.vending");
 

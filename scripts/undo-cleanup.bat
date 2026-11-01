@@ -17,7 +17,7 @@ if not "%IP::=%"=="%IP%" set T=[%IP%]:5555
 %ADB% connect %T%
 set D=%ADB% -s %T%
 
-for %%P in (com.hotack.silentsdk com.hotack.writesn com.htc.luminaos com.htc.htclauncherhighenglishd08) do (
+for %%P in (com.hotack.writesn com.htc.htclauncherhighenglishd08 com.htc.storeos com.htc.htcotaupdate android.rockchip.update.service com.htc.hyk_test com.android.toofifi com.toofifi.lineserver com.mphotool.usbcastserver com.mphotool.dlna com.mphotool.airplay com.htc.samescreen com.softwinner.miracastReceiver) do (
   %D% shell pm enable %%P
 )
 %D% shell settings put global window_animation_scale 1

@@ -3,6 +3,8 @@ package home.projector;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 
@@ -37,8 +39,33 @@ final class Tile {
         return this;
     }
 
+    String searchPkg;
+    String searchRegex;
+
+    /** First looks inside {@code pkg} for an openable screen whose name matches {@code regex}. */
+    Tile withSearch(String pkg, String regex) {
+        searchPkg = pkg;
+        searchRegex = regex;
+        return this;
+    }
+
     Intent resolve(Context c) {
         PackageManager pm = c.getPackageManager();
+
+        if (searchPkg != null) {
+            try {
+                PackageInfo info = pm.getPackageInfo(searchPkg, PackageManager.GET_ACTIVITIES);
+                if (info.activities != null) {
+                    for (ActivityInfo ai : info.activities) {
+                        if (!ai.exported || !ai.enabled || ai.permission != null) continue;
+                        String n = ai.name.toLowerCase(Locale.ROOT);
+                        if (n.matches(".*(" + searchRegex + ").*")) {
+                            return new Intent().setClassName(searchPkg, ai.name);
+                        }
+                    }
+                }
+            } catch (PackageManager.NameNotFoundException ignored) { }
+        }
 
         for (String p : packages) {
             Intent i = pm.getLeanbackLaunchIntentForPackage(p);
