@@ -51,7 +51,7 @@ goto window
 echo.
 echo  *** CONNECTED ***  You can stop pressing buttons.
 set D=adb.exe -s %T%
-set OUT=%USERPROFILE%\projector-rescue.txt
+set OUT=%~dp0projector-rescue.txt
 
 echo  Saving details...
 > "%OUT%" echo === CRASHES ===
@@ -68,7 +68,7 @@ echo  Saving details...
 %D% shell "logcat -d -t 600 | grep -iE 'htc|home.projector|keystone|display|AndroidRuntime|FATAL|ActivityTaskManager|panel|lcd|backlight'" >> "%OUT%" 2>&1
 
 echo  Taking a screenshot of what the projector is trying to show...
-%D% exec-out screencap -p > "%USERPROFILE%\projector-screen.png"
+%D% exec-out screencap -p > "%~dp0projector-screen.png"
 
 echo  Putting the earlier changes back...
 %D% shell pm enable com.htc.htclauncherhighenglishd08
